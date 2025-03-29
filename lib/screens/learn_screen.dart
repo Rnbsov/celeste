@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'image_recognition_screen.dart';
 
 class LearnScreen extends StatelessWidget {
   @override
@@ -21,6 +22,21 @@ class LearnScreen extends StatelessWidget {
             Text(
               'Learning resources',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ImageRecognitionScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.image_search),
+              label: const Text('Image Recognition'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
             ),
           ],
         ),
