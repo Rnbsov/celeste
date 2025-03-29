@@ -53,9 +53,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "celeste.png"
+  image_path: "assets/icon.png"
   web:
-    image_path: "celeste.png"
+    image_path: "assets/icon.png"
     generate: true
 
 # For information on the generic Dart part of this file, see the
