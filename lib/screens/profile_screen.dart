@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
-import '../main.dart';  // Add this import for MyHomePage
+import '../main.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String email;
@@ -18,6 +19,18 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Profile'),
         actions: [
+          // Settings button
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
+          // Logout button
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
