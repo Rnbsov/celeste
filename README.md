@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.png" width="120" alt="Celeste Logo" />
+  <img src="./assets/logo.svg" width="188" alt="Celeste Logo" />
 </p>
 
 <div align="center">
