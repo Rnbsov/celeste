@@ -1,5 +1,8 @@
 name: Flutter Build Android APK
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main, master ]
