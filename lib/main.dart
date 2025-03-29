@@ -3,6 +3,7 @@ import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 import 'util.dart';
 import 'theme.dart';
+import 'screens/home_screen.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -16,15 +17,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final brightness = View.of(context).platformDispatcher.platformBrightness;
 
-    // Retrieves the default theme for the platform
-    //TextTheme textTheme = Theme.of(context).textTheme;
-
-    // Use with Google Fonts package to use downloadable fonts
     TextTheme textTheme = createTextTheme(
       context,
       "Roboto Flex",
@@ -42,15 +38,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -77,9 +64,8 @@ class _MyHomePageState extends State<MyHomePage>
                 if (session != null && session.user.email != null) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              WelcomeScreen(email: session.user.email!),
+                      builder: (context) =>
+                          HomeScreen(email: session.user.email!),
                     ),
                   );
                 }
@@ -89,9 +75,8 @@ class _MyHomePageState extends State<MyHomePage>
                 if (session != null && session.user.email != null) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              WelcomeScreen(email: session.user.email!),
+                      builder: (context) =>
+                          HomeScreen(email: session.user.email!),
                     ),
                   );
                 }
@@ -104,65 +89,12 @@ class _MyHomePageState extends State<MyHomePage>
                 if (session != null && session.user.email != null) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              WelcomeScreen(email: session.user.email!),
+                      builder: (context) =>
+                          HomeScreen(email: session.user.email!),
                     ),
                   );
                 }
               },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Add this class at the end of your file
-
-class WelcomeScreen extends StatelessWidget {
-  final String email;
-
-  const WelcomeScreen({super.key, required this.email});
-
-  // Extract username from email (everything before @)
-  String get username {
-    return email.split('@')[0];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Welcome'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            const MyHomePage(title: 'Flutter Demo Home Page'),
-                  ),
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '👋 Hello ${username}',
-              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
