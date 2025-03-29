@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
-
 import 'util.dart';
 import 'theme.dart';
 
@@ -59,7 +58,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,16 +72,97 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SupaEmailAuth(
-              onSignInComplete: (response) {},
-              onSignUpComplete: (response) {},
+              onSignInComplete: (response) {
+                final session = response.session;
+                if (session != null && session.user.email != null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              WelcomeScreen(email: session.user.email!),
+                    ),
+                  );
+                }
+              },
+              onSignUpComplete: (response) {
+                final session = response.session;
+                if (session != null && session.user.email != null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              WelcomeScreen(email: session.user.email!),
+                    ),
+                  );
+                }
+              },
             ),
             SupaSocialsAuth(
-              socialProviders: [
-                // OAuthProvider.apple,
-                OAuthProvider.google,
-              ],
+              socialProviders: [OAuthProvider.google],
               colored: true,
-              onSuccess: (response) {},
+              onSuccess: (session) {
+                if (session != null && session.user.email != null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              WelcomeScreen(email: session.user.email!),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Add this class at the end of your file
+
+class WelcomeScreen extends StatelessWidget {
+  final String email;
+
+  const WelcomeScreen({super.key, required this.email});
+
+  // Extract username from email (everything before @)
+  String get username {
+    return email.split('@')[0];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Welcome'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            const MyHomePage(title: 'Flutter Demo Home Page'),
+                  ),
+                  (route) => false,
+                );
+              }
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '👋 Hello ${username}',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
