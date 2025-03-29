@@ -29,7 +29,6 @@ class ProfileScreen extends StatelessWidget {
               );
             },
           ),
-          // Logout button
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {

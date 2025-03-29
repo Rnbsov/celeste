@@ -8,7 +8,6 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar removed for a cleaner authentication interface
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -16,7 +15,6 @@ class AuthScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // App logo or title can be added here
                 Text(
                   'Welcome',
                   style: Theme.of(context).textTheme.headlineMedium,
