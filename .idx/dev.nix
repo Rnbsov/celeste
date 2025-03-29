@@ -19,6 +19,7 @@
     workspace = {
       # Runs when a workspace is first created with this `dev.nix` file
       onCreate = {
+        install-better-commits = "npm i -g better-commits";
         build-flutter = ''
           cd /home/user/myapp/android
 
