@@ -9,7 +9,7 @@
     pkgs.unzip
   ];
   # Sets environment variables in the workspace
-  env = {};
+  env = { };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
@@ -17,6 +17,9 @@
       "Dart-Code.dart-code"
     ];
     workspace = {
+      onStart = {
+        set-cm-alias = "echo \"alias cm='better-commits'\" >> ~/.bashrc";
+      };
       # Runs when a workspace is first created with this `dev.nix` file
       onCreate = {
         install-better-commits = "npm i -g better-commits";
@@ -42,7 +45,7 @@
           # flutter build web --profile --dart-define=Dart2jsOptimization=O0
         '';
       };
-      
+
       # To run something each time the workspace is (re)started, use the `onStart` hook
     };
     # Enable previews and customize configuration
@@ -50,11 +53,11 @@
       enable = true;
       previews = {
         web = {
-          command = ["flutter" "run" "--machine" "-d" "web-server" "--web-hostname" "0.0.0.0" "--web-port" "$PORT"];
+          command = [ "flutter" "run" "--machine" "-d" "web-server" "--web-hostname" "0.0.0.0" "--web-port" "$PORT" ];
           manager = "flutter";
         };
         android = {
-          command = ["flutter" "run" "--machine" "-d" "android" "-d" "localhost:5555"];
+          command = [ "flutter" "run" "--machine" "-d" "android" "-d" "localhost:5555" ];
           manager = "flutter";
         };
       };
