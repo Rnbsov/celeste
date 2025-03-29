@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/auth_screen.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import '../main.dart';
 import 'settings_screen.dart';
@@ -24,9 +25,7 @@ class ProfileScreen extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
@@ -37,10 +36,7 @@ class ProfileScreen extends StatelessWidget {
               await Supabase.instance.client.auth.signOut();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const MyHomePage(title: 'Flutter Demo Home Page'),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AuthScreen()),
                   (route) => false,
                 );
               }
@@ -61,15 +57,9 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              username,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text(username, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 10),
-            Text(
-              email,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            Text(email, style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
       ),
