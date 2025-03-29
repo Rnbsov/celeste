@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./celeste.png" width="120" alt="Celeste Logo" />
+</p>
+
 <div align="center">
     <h1>【 Celeste 】</h1>
     <h3></h3>
@@ -16,7 +20,6 @@
     <h2>• overview •</h2>
     <h3></h3>
 </div>
-
 
 # myapp
 
