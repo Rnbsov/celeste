@@ -42,3 +42,27 @@ jobs:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           
+        # New steps for creating tag and release
+      - name: Generate build timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        
+      - name: Create tag
+        id: create_tag
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: |
+          TAG_NAME="v$(grep 'version:' pubspec.yaml | awk '{print $2}' | tr -d "'")-build-${{ steps.timestamp.outputs.timestamp }}"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+          
+      - name: Create Release
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.create_tag.outputs.tag }}
+          name: Release ${{ steps.create_tag.outputs.tag }}
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
+          
