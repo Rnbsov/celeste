@@ -67,7 +67,10 @@ Celeste is a cross-platform application designed to simplify and systematize the
 - **Authentication**: Supabase Auth (with Google provider support)
 - **Database**: Supabase PostgreSQL
 
-## Continuous Integration / Continuous Deployment
+> [!TIP]
+> 🚀 Highly Modern Tech Stack designed for best experience and scalability
+
+## Releases and CI/CD
 
 This project uses GitHub Actions to automate the build and release process:
 
@@ -77,3 +80,12 @@ This project uses GitHub Actions to automate the build and release process:
 - **Release Notes**: Automatically generated release notes document changes
 
 You can download the latest APK from the [Releases page](https://github.com/Rnbsov/celeste/releases).
+
+> [!IMPORTANT]
+> This project was crafted with ✨ love and passion ✨
+
+<div align="center">
+
+  🍃 【 Happy Growing! 】👾
+
+</div>
