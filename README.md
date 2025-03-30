@@ -22,6 +22,24 @@
     <h3></h3>
 </div>
 
+<div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+  <div style="display: flex; flex-direction: column; align-items: center; margin: 10px;">
+    <img src="./assets/screen_1.png" alt="Home Screen" width="220" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <p><strong>Home Screen</strong></p>
+  </div>
+  
+  <div style="display: flex; flex-direction: column; align-items: center; margin: 10px;">
+    <img src="./assets/screen_2.png" alt="Journal View" width="220" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <p><strong>Journal View</strong></p>
+  </div>
+  
+  <div style="display: flex; flex-direction: column; align-items: center; margin: 10px;">
+    <img src="./assets/screen_3.png" alt="Analytics Dashboard" width="220" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <p><strong>Analytics Dashboard</strong></p>
+  </div>
+</div>
+
+
 ## About Celeste
 
 Celeste is a cross-platform application designed to simplify and systematize the process of monitoring microgreens growth, maintaining phenological records, and storing data for analysis and forecasting. Track your plant growth journey with ease!
