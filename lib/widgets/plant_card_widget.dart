@@ -62,7 +62,6 @@ class PlantCard extends StatelessWidget {
         plantColor = theme.colorScheme.primary;
     }
 
-    // For compact mode, use a row layout with smaller image
     if (isCompact) {
       return Card(
         elevation: 2,

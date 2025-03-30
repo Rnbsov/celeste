@@ -584,20 +584,12 @@ class _ChatbotScreenState extends State<ChatbotScreen>
 
   // Add this method for animated dots:
   Widget _buildLoadingDots() {
-    return AnimatedBuilder(
-      animation: AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 1500),
-      )..repeat(),
-      builder: (context, child) {
-        return Text(
-          "...",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontStyle: FontStyle.italic,
-          ),
-        );
-      },
+    return Text(
+      "...",
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
+        fontStyle: FontStyle.italic,
+      ),
     );
   }
 }

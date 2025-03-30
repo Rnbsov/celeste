@@ -1,4 +1,4 @@
-import 'DiaryEntryModel.dart';
+import 'diary_entry_model.dart';
 
 class PlantModel {
   final int? id;

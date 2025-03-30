@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/analytics_screen.dart';
 
 import 'today_screen.dart';
 import 'chatbot_screen.dart';
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> screens = [
       TodayScreen(username: widget.displayName),
       ChatbotScreen(),
-      LearnScreen(),
+      AnalyticsScreen(),
       ProfileScreen(email: widget.email, displayName: widget.displayName),
     ];
 
@@ -93,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           items: [
             _buildNavItem(context, Icons.today, 'Today', 0),
             _buildNavItem(context, Icons.chat, 'Chatbot', 1),
-            _buildNavItem(context, Icons.school, 'Learn', 2),
+            _buildNavItem(context, Icons.school, 'Analytics', 2),
             _buildNavItem(context, Icons.person, 'Profile', 3),
           ],
         ),

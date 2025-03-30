@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:myapp/models/diary_entry_model.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/plant_model.dart';
@@ -14,18 +15,127 @@ class PlantService {
     return client.auth.currentSession?.accessToken;
   }
 
-  static Future<PlantModel> getPlantById(int plantId) async {
+  static Future<void> deleteDiaryEntry(int entryId) async {
     try {
-      final response =
-          await client
-              .from('plants')
-              .select('*, watering_history(*), diary_entries(*)')
-              .eq('id', plantId)
-              .single();
-      return PlantModel.fromJson(response);
+      // Try direct Supabase query first
+      await client.from('diary_entries').delete().eq('id', entryId);
     } catch (e) {
-      log('Error fetching plant: $e');
-      throw Exception('Failed to fetch plant details');
+      log('Supabase delete diary entry error: $e');
+      // If Supabase operation fails, try the backend API
+      try {
+        final headers = await _getHeaders();
+        final response = await http.delete(
+          Uri.parse('$_baseUrl/diary/$entryId/'),
+          headers: headers,
+        );
+
+        if (response.statusCode != 204 && response.statusCode != 200) {
+          throw Exception(
+            'Failed to delete diary entry: ${response.statusCode}',
+          );
+        }
+      } catch (e) {
+        log('API error deleting diary entry: $e');
+        rethrow;
+      }
+    }
+  }
+  // Add these methods to your PlantService class
+
+  static Future<List<DiaryEntryModel>> getPlantDiaryEntries(int plantId) async {
+    try {
+      // Try direct Supabase query first
+      final response = await client
+          .from('diary_entries')
+          .select()
+          .eq('plant_id', plantId)
+          .order('date', ascending: false);
+
+      log('Diary entries response: $response');
+      return (response as List)
+          .map((entry) => DiaryEntryModel.fromJson(entry))
+          .toList();
+    } catch (e) {
+      log('Supabase diary entries error: $e');
+      // If Supabase operation fails, try the backend API
+      try {
+        final headers = await _getHeaders();
+        final response = await http.get(
+          Uri.parse('$_baseUrl/plants/$plantId/diary/'),
+          headers: headers,
+        );
+
+        log('API diary entries status: ${response.statusCode}');
+
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          return data.map((entry) => DiaryEntryModel.fromJson(entry)).toList();
+        } else {
+          throw Exception(
+            'Failed to load diary entries: ${response.statusCode}',
+          );
+        }
+      } catch (e) {
+        log('API error fetching diary entries: $e');
+        rethrow;
+      }
+    }
+  }
+
+  static Future<DiaryEntryModel> addDiaryEntry(DiaryEntryModel entry) async {
+    try {
+      // Try direct Supabase query first
+      final data = {
+        'plant_id': entry.plantId,
+        'date': entry.date?.toIso8601String(),
+        'notes': entry.notes,
+        'height': entry.height,
+        'image_url': entry.imageUrl,
+      };
+
+      final response =
+          await client.from('diary_entries').insert(data).select().single();
+
+      return DiaryEntryModel.fromJson(response);
+    } catch (e) {
+      log('Supabase add diary entry error: $e');
+      // If Supabase operation fails, try the backend API
+      try {
+        final headers = await _getHeaders();
+        final response = await http.post(
+          Uri.parse('$_baseUrl/diary/'),
+          headers: headers,
+          body: json.encode({
+            'plant_id': entry.plantId,
+            'date': entry.date?.toIso8601String(),
+            'notes': entry.notes,
+            'height': entry.height,
+            'image_url': entry.imageUrl,
+          }),
+        );
+
+        if (response.statusCode == 201) {
+          // Return entry with ID from response if available
+          final responseData = json.decode(response.body);
+          if (responseData is Map && responseData.containsKey('id')) {
+            final newEntry = DiaryEntryModel(
+              id: responseData['id'],
+              plantId: entry.plantId,
+              date: entry.date,
+              notes: entry.notes,
+              height: entry.height,
+              imageUrl: entry.imageUrl,
+            );
+            return newEntry;
+          }
+          return entry; // Return original entry if no ID in response
+        } else {
+          throw Exception('Failed to add diary entry: ${response.statusCode}');
+        }
+      } catch (e) {
+        log('API error adding diary entry: $e');
+        rethrow;
+      }
     }
   }
 
@@ -53,6 +163,8 @@ class PlantService {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
+      log('Supabase response: $response');
+
       return (response as List)
           .map((plant) => PlantModel.fromJson(plant))
           .toList();
@@ -64,6 +176,8 @@ class PlantService {
           Uri.parse('$_baseUrl/plants/'),
           headers: headers,
         );
+
+        log('API response status: ${response.statusCode}');
 
         if (response.statusCode == 200) {
           final List<dynamic> data = json.decode(response.body);
@@ -174,44 +288,5 @@ class PlantService {
     }
   }
 
-  // Add diary entry for a plant
-  static Future<void> addDiaryEntry({
-    required int plantId,
-    required String note,
-    double? height,
-    DateTime? date,
-  }) async {
-    final entryDate = date ?? DateTime.now();
-
-    try {
-      // First try with Supabase query
-      await client.from('diary_entries').insert({
-        'plant_id': plantId,
-        'note': note,
-        'height': height,
-        'date': entryDate.toIso8601String(),
-      });
-    } catch (e) {
-      // If Supabase operation fails, try the backend API
-      try {
-        final headers = await _getHeaders();
-        final response = await http.post(
-          Uri.parse('$_baseUrl/diary/'),
-          headers: headers,
-          body: json.encode({
-            'plant_id': plantId,
-            'note': note,
-            'height': height,
-            'date': entryDate.toIso8601String(),
-          }),
-        );
-
-        if (response.statusCode != 201) {
-          throw Exception('Failed to add diary entry: ${response.statusCode}');
-        }
-      } catch (e) {
-        rethrow;
-      }
-    }
-  }
+  static getPlantById(int i) {}
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/models/diary_entry_model.dart';
 import '../models/plant_model.dart';
 import '../services/plant_service.dart';
 
@@ -19,10 +20,41 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
 
   PlantModel get plant => widget.plant;
 
+  List<DiaryEntryModel> _diaryEntries = [];
+  bool _loadingDiary = false;
+
+  Future<void> _loadDiaryEntries() async {
+    setState(() {
+      _loadingDiary = true;
+    });
+
+    try {
+      final entries = await PlantService.getPlantDiaryEntries(
+        int.parse(plant.id as String),
+      );
+      setState(() {
+        _diaryEntries = entries;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load journal entries: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _loadingDiary = false;
+      });
+    }
+  }
+
+  // Add this to your initState() method
   @override
   void initState() {
     super.initState();
     _loadWateringHistory();
+    _loadDiaryEntries(); // Add this line
   }
 
   Future<void> _loadWateringHistory() async {
@@ -192,6 +224,21 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
           plant.plantType.toLowerCase(),
       orElse: () => plantTypes[0],
     );
+  }
+
+  IconData _getPropertyIcon(String propertyName) {
+    switch (propertyName.toLowerCase()) {
+      case 'water needs':
+        return Icons.water_drop;
+      case 'light':
+        return Icons.wb_sunny;
+      case 'growth period':
+        return Icons.calendar_today;
+      case 'beginner friendly':
+        return Icons.thumb_up;
+      default:
+        return Icons.info_outline;
+    }
   }
 
   @override
@@ -390,55 +437,111 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  ...(plantTypeInfo['properties']
-                                          as Map<String, dynamic>)
-                                      .entries
-                                      .map(
-                                        (entry) => Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 4,
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: GridView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            childAspectRatio:
+                                                1.8, // Smaller aspect ratio gives more height
+                                            crossAxisSpacing: 10,
+                                            mainAxisSpacing: 10,
                                           ),
-                                          child: Row(
+                                      itemCount:
+                                          (plantTypeInfo['properties']
+                                                  as Map<String, dynamic>)
+                                              .length,
+                                      itemBuilder: (context, index) {
+                                        final entry =
+                                            (plantTypeInfo['properties']
+                                                    as Map<String, dynamic>)
+                                                .entries
+                                                .elementAt(index);
+
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            color: plantColor.withOpacity(0.08),
+                                            border: Border.all(
+                                              color: plantColor.withOpacity(
+                                                0.2,
+                                              ),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          padding: EdgeInsets.all(12),
+                                          child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Container(
-                                                margin: EdgeInsets.only(top: 6),
-                                                width: 6,
-                                                height: 6,
-                                                decoration: BoxDecoration(
-                                                  color: plantColor,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    style:
-                                                        DefaultTextStyle.of(
-                                                          context,
-                                                        ).style,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: '${entry.key}: ',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      TextSpan(
-                                                        text: entry.value,
-                                                      ),
-                                                    ],
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    _getPropertyIcon(entry.key),
+                                                    size: 16,
+                                                    color: plantColor,
                                                   ),
+                                                  SizedBox(width: 6),
+                                                  Expanded(
+                                                    child: Text(
+                                                      entry.key,
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12,
+                                                        color:
+                                                            Colors
+                                                                .grey
+                                                                .shade700,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 6),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 3,
+                                                  horizontal: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: plantColor.withOpacity(
+                                                    0.15,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  '${entry.value}',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13,
+                                                    color: plantColor
+                                                        .withOpacity(0.9),
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      )
-                                      .toList(),
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  // Add this helper method in your _PlantDetailScreenState class
                                 ],
                               ),
                             ),
