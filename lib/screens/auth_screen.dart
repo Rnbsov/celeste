@@ -45,10 +45,36 @@ class AuthScreen extends StatelessWidget {
   }
 
   void _handleAuthSuccess(BuildContext context, Session? session) {
-    if (session != null && session.user.email != null) {
+    if (session != null && session.user != null) {
+      // Get the display name from user metadata if available
+      String? displayName;
+
+      // First, try to get name from user_metadata (from social providers)
+      if (session.user.userMetadata != null) {
+        displayName = session.user.userMetadata?['full_name'] as String?;
+
+        // If full_name isn't available, try name
+        if (displayName == null) {
+          displayName = session.user.userMetadata?['name'] as String?;
+        }
+      }
+
+      // If still no name, try to get from user attributes
+      if (displayName == null) {
+        displayName = session.user.email?.split('@')[0];
+      }
+
+      // Ensure we have at least some display name
+      displayName ??= "User";
+
+      // Pass both email and name to HomeScreen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomeScreen(email: session.user.email!),
+          builder:
+              (context) => HomeScreen(
+                email: session.user.email ?? "",
+                displayName: displayName ?? "User",
+              ),
         ),
       );
     }

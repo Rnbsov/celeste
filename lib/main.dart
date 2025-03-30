@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'util.dart';
 import 'theme.dart';
-import 'screens/auth_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load();
+
   await Supabase.initialize(
-    url: 'https://jbpeszoljhnymgqhufmd.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpicGVzem9samhueW1ncWh1Zm1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMyNTAzMDIsImV4cCI6MjA1ODgyNjMwMn0.NX3h_DpXqnpabbla3wR-RHQTuZskM3aJeX2qU1HNUe0',
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
+
   runApp(const MyApp());
 }
 
@@ -30,9 +35,9 @@ class MyApp extends StatelessWidget {
     MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Celesta',
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: const AuthScreen(),
+      home: const SplashScreen(),
     );
   }
 }
