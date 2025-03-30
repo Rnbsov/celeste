@@ -6,8 +6,13 @@ import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String email;
+  final String displayName;
 
-  const ProfileScreen({super.key, required this.email});
+  const ProfileScreen({
+    super.key,
+    required this.email,
+    required this.displayName,
+  });
 
   String get username {
     return email.split('@')[0];

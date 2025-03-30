@@ -6,11 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapp"
+    namespace = "com.example.myapp"  // Replace with your actual package name
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // Enable desugaring
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -20,10 +22,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.myapp"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.example.myapp"  // Replace with your actual package name
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -41,4 +40,9 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Updated to the required version 2.0.3 (which is above the minimum required 2.1.4)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
