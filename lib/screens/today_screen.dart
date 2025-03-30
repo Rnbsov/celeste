@@ -17,7 +17,7 @@ class TodayScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '👋 Welcome back, ${username}!',
+              '👋 Welcome back, $username!',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 20),

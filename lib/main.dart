@@ -3,7 +3,7 @@ import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 import 'util.dart';
 import 'theme.dart';
-import 'screens/home_screen.dart';
+import 'screens/auth_screen.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -29,76 +29,10 @@ class MyApp extends StatelessWidget {
 
     MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SupaEmailAuth(
-              onSignInComplete: (response) {
-                final session = response.session;
-                if (session != null && session.user.email != null) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(email: session.user.email!),
-                    ),
-                  );
-                }
-              },
-              onSignUpComplete: (response) {
-                final session = response.session;
-                if (session != null && session.user.email != null) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(email: session.user.email!),
-                    ),
-                  );
-                }
-              },
-            ),
-            SupaSocialsAuth(
-              socialProviders: [OAuthProvider.google],
-              colored: true,
-              onSuccess: (session) {
-                if (session != null && session.user.email != null) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HomeScreen(email: session.user.email!),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+      home: const AuthScreen(),
     );
   }
 }

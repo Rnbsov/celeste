@@ -38,30 +38,67 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.today),
-            label: 'Today',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chatbot',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Learn',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Theme.of(
+            context,
+          ).colorScheme.onSurface.withOpacity(0.6),
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+          showUnselectedLabels: true,
+          items: [
+            _buildNavItem(context, Icons.today, 'Today', 0),
+            _buildNavItem(context, Icons.chat, 'Chatbot', 1),
+            _buildNavItem(context, Icons.school, 'Learn', 2),
+            _buildNavItem(context, Icons.person, 'Profile', 3),
+          ],
+        ),
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+  ) {
+    final isSelected = _selectedIndex == index;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+
+    return BottomNavigationBarItem(
+      icon: Container(
+        padding: const EdgeInsets.all(10.0),
+        margin: const EdgeInsets.only(bottom: 4.0, top: 8.0),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color:
+              isSelected ? primaryColor.withOpacity(0.15) : Colors.transparent,
+        ),
+        child: Icon(
+          icon,
+          color:
+              isSelected
+                  ? primaryColor
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        ),
+      ),
+      label: label,
     );
   }
 }
